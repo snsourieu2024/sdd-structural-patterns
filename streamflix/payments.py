@@ -45,21 +45,22 @@ class PayPalClient:
 
 class StripeAdapter(PaymentProcessor):
     def __init__(self, stripe: StripeAPI):
-      # TODO: store the wrapped StripeAPI instance
-      pass
+        self.stripe = stripe
 
     def pay(self, amount: float) -> str:
+      self.stripe.charge_cents(int(amount * 100))
+      return f"paid {amount:.2f} EUR via stripe ({self.stripe.merchant_id})"
+      
+      
       # TODO: convert `amount` (EUR) to integer cents, call self._stripe.charge_cents,
       # and return "paid {amount:.2f} EUR via stripe ({merchant_id})"
-      pass
+      
 
 
 class PayPalAdapter(PaymentProcessor):
     def __init__(self, paypal: PayPalClient):
-      # TODO: store the wrapped PayPalClient instance
-      pass
+        self.paypal = paypal
 
     def pay(self, amount: float) -> str:
-      # TODO: call self._paypal.send_payment with amount formatted to 2 decimals and
-      # currency "EUR", and return "paid {amount:.2f} EUR via paypal ({account_email})"
-      pass
+      self.paypal.send_payment(f"{amount:.2f}", "EUR")
+      return f"paid {amount:.2f} EUR via paypal ({self.paypal.account_email})"
